@@ -1,6 +1,6 @@
 %% add common utilities to path
 
-addpath(genpath('../../commonUtilities'))
+addpath(genpath('../commonUtilities'))
 
 %% Download SP500 stock price data
 
