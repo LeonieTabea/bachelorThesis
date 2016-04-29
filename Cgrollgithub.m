@@ -4,7 +4,7 @@ addpath(genpath('../commonUtilities'))
 
 %% Download SP500 stock price data
 
-relDataPath = '../../finDataMatlab/';
+relDataPath = '../bachelorThesis/';
 
 %%
 % specify start and end year of investigation period
@@ -99,7 +99,7 @@ futurePrices.Ticker = futureIDs;
 %%
 
 % save to disk
-fname = fullfile(relDataPath, 'private_data/rawData/futurePrices.csv');
+fname = fullfile(relDataPath, 'futurePrices.csv');
 writetable(futurePrices, fname)
 
 %%
