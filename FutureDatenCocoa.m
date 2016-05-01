@@ -1,7 +1,7 @@
 %% add common utilities to path
 
 addpath(genpath('../commonUtilities'))
-
+addpath(genpath('../FutureDaten'))
 %% Download SP500 stock price data
 
 relDataPath = '../bachelorThesis/';
@@ -99,7 +99,7 @@ futurePrices.Ticker = futureIDs;
 %%
 
 % save to disk
-fname = fullfile(relDataPath, 'futurePricesCocoa.csv');
+fname = fullfile('../FutureDaten/', 'futurePricesCocoa.csv');
 writetable(futurePrices, fname)
 
 %%
