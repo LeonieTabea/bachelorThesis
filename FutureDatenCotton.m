@@ -111,6 +111,28 @@ prices = unstack(settlePrices, 'Settle', 'Ticker');
 % important: unstack does not guarantee sorting with regards to dates
 prices = sortrows(prices, 'Date'); 
 
+%for i = 1:height(prices)
+%            if prices(:i+j) ~= NaN AND
+%                ticker(i) ~= ticker(i+j)
+%           end
+%      end
+% end
+%end
+                
+                
+        
+        
+    
+
+    
+    
+
+
+
+
+
+
+
 %% get number of zero prices per column
 
 nZeros = varfun(@(x)sum(x == 0), prices(:, 2:end));
@@ -131,3 +153,17 @@ plot(prices.Date, prices{:, 2:end})
 datetick 'x'
 grid on
 grid minor
+
+%% test zeug
+lenie = [];
+for col = prices{:, 2:end}
+    notnan = find(~isnan(col)); 
+    lenie(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
+end
+
+any(lenie == false)
+%% convert zeros to nan
+prices{:,2:end}(prices{:,2:end} == 0) = nan;
+
+%% add maturity to Data
+
