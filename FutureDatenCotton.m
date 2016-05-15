@@ -111,15 +111,37 @@ prices = unstack(settlePrices, 'Settle', 'Ticker');
 % important: unstack does not guarantee sorting with regards to dates
 prices = sortrows(prices, 'Date'); 
 
-%for i = 1:height(prices)
-%            if prices(:i+j) ~= NaN AND
-%                ticker(i) ~= ticker(i+j)
-%           end
-%      end
-% end
-%end
-                
-                
+%%
+
+[nRows, nCols] = size(prices);
+
+% preallocation
+lastDateObs = zeros(1,nCols);
+
+for ii=1:nCols
+    for jj=1:nRows
+        thisVal = prices{jj, ii};
+        if ~isnan(thisVal) & ~ (thisVal == 0)
+            lastDateObs(1, ii) = prices.Date(jj);
+        end
+    end
+end
+ 
+%%
+
+priceVals = prices{:, :};
+
+validObs = ~isnan(priceVals) & ~ (priceVals == 0);
+
+findLastValFun = @(x)find(x, 1, 'last');
+
+lastObsInds = zeros(1, nCols);
+for ii=1:nCols
+    lastObsInds(1, ii) = findLastValFun(validObs(:, ii));
+end
+        
+%%
+datestr(prices.Date(lastObsInds(1, 2)))
         
         
     
