@@ -134,35 +134,32 @@ datetick 'x'
 grid on
 grid minor
 
-%% test zeug
-lenie = [];
+
+%% Zeros nur am Ende und Anfang
+LocationZeros = [];
 for col = prices{:, 2:end}
     notnan = find(~isnan(col)); 
-    lenie(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
+    LocationZeros(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
 end
 
-any(lenie == false)
+any(LocationZeros == false)
 
-%% test zeug nummer 2
+%% Zeros nur am Ende und Anfang mit nZeros
 
-leniee = [];
+LocationnZeros = [];
 for col = prices{:, tabnames(nZeros(:, xxInds))}
     notnan = find(~isnan(col)); 
-    leniee(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
+    LocationnZeros(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
 end
 
-leniee
+LocationnZeros
 
-%% Vergleich von leniee mit nZeros(1, xxInds) zeigt, dass nur vier Futures die Null-Werte nicht nur am Ende o. Anfang haben. Überprüfung zeigt, dass Volumen bei diesen Werten auch immer NUll ist, daher können sie gelöscht werden.
+%% Vergleich von LocationnZeros mit nZeros(1, xxInds) zeigt, dass nur vier Futures die Null-Werte nicht nur am Ende o. Anfang haben. Überprüfung zeigt, dass Volumen bei diesen Werten auch immer NUll ist, daher können sie gelöscht werden.
 %% convert zeros to nan
 prices{:,2:end}(prices{:,2:end} == 0) = nan;
 %% Add maturity to data
 
 
- sum(isfinite(A))
-
-
-X(sub2ind(size(X),1:size(X,1),max(bsxfun(@times,~isnan(X),1:size(X,2)),[],2).'))
-
+ 
 
 

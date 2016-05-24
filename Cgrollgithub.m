@@ -132,13 +132,13 @@ datetick 'x'
 grid on
 grid minor
 
-%% test zeug
-lenie = [];
+%% Zeros nur am Ende und Anfang
+LocationZeros = [];
 for col = prices{:, 2:end}
     notnan = find(~isnan(col)); 
-    lenie(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
+    LocationZeros(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
 end
 
-any(lenie == false)
+any(LocationZeros == false)
 %% convert zeros to nan
 prices{:,2:end}(prices{:,2:end} == 0) = nan;

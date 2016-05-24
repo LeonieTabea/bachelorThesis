@@ -140,19 +140,42 @@ for ii=1:nCols
     lastObsInds(1, ii) = findLastValFun(validObs(:, ii));
 end
         
-%%
+%% Maturity und Datum
 datestr(prices.Date(lastObsInds(1, 2)))
-        
-        
+datestr(prices.Date(lastObsInds(1, 3)))        
+datestr(prices.Date(lastObsInds(1, 4)))        
     
 
-    
-    
+Maturities = prices.Date(lastObsInds(1,:))   
+
+Maturities(1,1)
+
+MaturityDate = zeros(nRows,nCols);
+
+for ii=1:nCols
+    for jj=1:nRows
+        thisVal = prices{jj, ii};
+        if ~isnan(thisVal) & ~ (thisVal == 0)
+            MaturityDate(jj, ii) = prices.Date(jj);
+        end
+    end
+end
+
+%% Maturity - prices.Date
 
 
+MaturityDates = MaturityDate;
 
+for ii=2:nCols
+    for jj=1:nRows
+        thisVal = MaturityDate(jj, ii);
+        if ~isnan(thisVal) & ~ (thisVal == 0)
+        MaturityDates(jj, ii) = Maturities(ii)-MaturityDate(jj,ii);
+        end
+    end
+ end
 
-
+MaturityDates = array2table(MaturityDates);
 
 
 %% get number of zero prices per column
@@ -176,16 +199,16 @@ datetick 'x'
 grid on
 grid minor
 
-%% test zeug
-lenie = [];
+%% Zeros nur am Ende und Anfang
+LocationZeros = [];
 for col = prices{:, 2:end}
     notnan = find(~isnan(col)); 
-    lenie(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
+    LocationZeros(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
 end
 
-any(lenie == false)
+any(LocationZeros == false)
 %% convert zeros to nan
 prices{:,2:end}(prices{:,2:end} == 0) = nan;
 
-%% add maturity to Data
+
 
