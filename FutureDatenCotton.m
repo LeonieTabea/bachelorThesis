@@ -154,6 +154,42 @@ dats = repmat(prices.Date, 1, nCols);
 xxMaturs = repmat(Maturities', nRows, 1);
 MaturityDates = xxMaturs - dats;
 
+%%
+
+% include real dates again
+MaturityDates(:, 1) = prices.Date;
+
+%%
+
+% set unrequired values to NaN
+MaturityDates(MaturityDates < 0) = NaN;
+
+%%
+% make table
+xx = array2table(MaturityDates);
+xx.Properties.VariableNames = tabnames(prices);
+
+%%
+
+% make long format for prices and maturity dates
+longXX = stack(xx, tabnames(xx(:, 2:end)),...
+    'NewDataVariableName','TimeToMaturity',...
+    'IndexVariableName','FutureID');
+
+% make prices to long format
+longPrices = stack(prices, tabnames(prices(:, 2:end)),...
+    'NewDataVariableName','FuturePrices',...
+    'IndexVariableName','FutureID');
+
+% remove invalid prices
+invalidObs = isnan(longPrices.FuturePrices) | longPrices.FuturePrices == 0;
+longPrices = longPrices(~invalidObs, :);
+
+%%
+%
+pricesAndMaturities = outerjoin(longPrices, longXX, 'Keys', {'Date', 'FutureID'},...
+    'MergeKeys', true, 'Type', 'left');
+
 %% Maturity - prices.Date
 
 
