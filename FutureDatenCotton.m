@@ -113,7 +113,6 @@ prices = sortrows(prices, 'Date');
 
 %%
 
-[nRows, nCols] = size(prices);
 
 % preallocation
 lastDateObs = zeros(1,nCols);
@@ -129,37 +128,31 @@ end
  
 %%
 
+% extract prices as matrix
 priceVals = prices{:, :};
 
+% find valid observations: neither NaN nor 0
 validObs = ~isnan(priceVals) & ~ (priceVals == 0);
 
+% define function to find last valid observation in column vector
 findLastValFun = @(x)find(x, 1, 'last');
 
+% apply function to each column to find last observation
+[nRows, nCols] = size(prices);
 lastObsInds = zeros(1, nCols);
 for ii=1:nCols
     lastObsInds(1, ii) = findLastValFun(validObs(:, ii));
 end
-        
-%% Maturity und Datum
-datestr(prices.Date(lastObsInds(1, 2)))
-datestr(prices.Date(lastObsInds(1, 3)))        
-datestr(prices.Date(lastObsInds(1, 4)))        
-    
 
-Maturities = prices.Date(lastObsInds(1,:))   
+% get respective dates to get maturities
+Maturities = prices.Date(lastObsInds(1,:));
 
-Maturities(1,1)
+% replicate date column
+dats = repmat(prices.Date, 1, nCols);
 
-MaturityDate = zeros(nRows,nCols);
-
-for ii=1:nCols
-    for jj=1:nRows
-        thisVal = prices{jj, ii};
-        if ~isnan(thisVal) & ~ (thisVal == 0)
-            MaturityDate(jj, ii) = prices.Date(jj);
-        end
-    end
-end
+% get distance to maturity
+xxMaturs = repmat(Maturities', nRows, 1);
+MaturityDates = xxMaturs - dats;
 
 %% Maturity - prices.Date
 
@@ -178,8 +171,9 @@ for ii=2:nCols
 MaturityDates = array2table(MaturityDates);
 
 
-%% get number of zero prices per column
+%% Visualize time series with zero prices
 
+% get number of zero prices per column
 nZeros = varfun(@(x)sum(x == 0), prices(:, 2:end));
 nZeros.Properties.VariableNames = tabnames(prices(:, 2:end));
 
