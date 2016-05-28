@@ -8,8 +8,8 @@ relDataPath = '../bachelorThesis/';
 
 %%
 % specify start and end year of investigation period
-dateBeg = 1975;
-dateEnd = 2016;
+dateBeg = 1985;
+dateEnd = 2015;
 
 %% specify encoding for maturity month
 
@@ -110,6 +110,100 @@ prices = unstack(settlePrices, 'Settle', 'Ticker');
 
 % important: unstack does not guarantee sorting with regards to dates
 prices = sortrows(prices, 'Date'); 
+
+%% 
+
+
+% extract prices as matrix
+priceVals = prices{:, :};
+
+% find valid observations: neither NaN nor 0
+validObs = ~isnan(priceVals) & ~ (priceVals == 0);
+
+% define function to find last valid observation in column vector
+findLastValFun = @(x)find(x, 1, 'last');
+
+% apply function to each column to find last observation
+[nRows, nCols] = size(prices);
+lastObsInds = zeros(1, nCols);
+for ii=1:nCols
+    lastObsInds(1, ii) = findLastValFun(validObs(:, ii));
+end
+
+% get respective dates to get maturities
+Maturities = prices.Date(lastObsInds(1,:));
+
+% replicate date column
+dats = repmat(prices.Date, 1, nCols);
+
+% get distance to maturity
+xxMaturs = repmat(Maturities', nRows, 1);
+MaturityDates = xxMaturs - dats;
+
+%%
+
+% include real dates again
+MaturityDates(:, 1) = prices.Date;
+
+%%
+
+% set unrequired values to NaN
+MaturityDates(MaturityDates < 0) = NaN;
+
+%%
+% make table
+maturitiestable = array2table(MaturityDates);
+maturitiestable.Properties.VariableNames = tabnames(prices);
+
+%%
+
+% make long format for prices and maturity dates
+longMaturities = stack(maturitiestable, tabnames(maturitiestable(:, 2:end)),...
+    'NewDataVariableName','TimeToMaturity',...
+    'IndexVariableName','FutureID');
+
+% make prices to long format
+longPrices = stack(prices, tabnames(prices(:, 2:end)),...
+    'NewDataVariableName','FuturePrices',...
+    'IndexVariableName','FutureID');
+
+% remove invalid prices
+invalidObs = isnan(longPrices.FuturePrices) | longPrices.FuturePrices == 0;
+longPrices = longPrices(~invalidObs, :);
+
+%%
+%
+pricesAndMaturities = outerjoin(longPrices, longMaturities, 'Keys', {'Date', 'FutureID'},...
+    'MergeKeys', true, 'Type', 'left');
+
+%% 
+% Change Variable Name  
+
+SpotPricesRohstoffe.Properties.VariableNames{'Code'} = 'Date';
+
+
+% Delete cocoa, gold etc. 
+SpotPricesRohstoffe.Cotton = []
+SpotPricesRohstoffe.Cocoa = []
+SpotPricesRohstoffe.Corn = []
+SpotPricesRohstoffe.Oil = []
+
+% sort SpotPrices
+SpotPricesRohstoffe = sortrows(SpotPricesRohstoffe, 'Date');
+
+%%
+%Add spot prices to long format
+
+pricesAndMaturitiesAndspotprices = outerjoin(pricesAndMaturities,SpotPricesRohstoffe, 'Keys', {'Date'},...
+    'MergeKeys', true, 'Type', 'left');
+%%
+% Add new Column (Futureprice-spotprice) to pricesAndMaturitiesAndspotprices
+
+pricesAndMaturitiesAndspotprices.PriceDifference = pricesAndMaturitiesAndspotprices.FuturePrices - pricesAndMaturitiesAndspotprices.Gold;
+
+% TestGrafik time to maturity & Price Difference
+plot(pricesAndMaturitiesAndspotprices.TimeToMaturity,pricesAndMaturitiesAndspotprices.PriceDifference)
+
 
 %% get number of zero prices per column
 
