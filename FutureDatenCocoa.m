@@ -242,9 +242,20 @@ end
 
 LocationnZeros
 
-%% Vergleich von LocationnZeros mit nZeros(1, xxInds) zeigt, dass nur vier Futures die Null-Werte nicht nur am Ende o. Anfang haben. Überprüfung zeigt, dass Volumen bei diesen Werten auch immer NUll ist, daher können sie gelöscht werden.
+%% Test Vergleich von Nuller bei Settle und Volume
+
+settlePrices1 = futurePrices(:, {'Date', 'Settle', 'Ticker','Volume'});
+
+if all(settlePrices1{settlePrices1{:,2} == 0, 4} == 0)
+    disp('True')
+end
+
+
+
+%% if schleife zeigt, dass von allen 0-Werten, die nicht am anfang oder ende sind, das volumen auch Null ist.
 %% convert zeros to nan
 prices{:,2:end}(prices{:,2:end} == 0) = nan;
+
 
 %%
 
