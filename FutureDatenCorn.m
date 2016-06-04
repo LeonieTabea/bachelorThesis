@@ -206,6 +206,13 @@ pricesAndMaturitiesAndspotprices.PriceDifference = pricesAndMaturitiesAndspotpri
 % TestGrafik time to maturity & Price Difference
 plot(pricesAndMaturitiesAndspotprices.TimeToMaturity,pricesAndMaturitiesAndspotprices.PriceDifference)
 
+%% Testplot maturity & Price Difference getrennt nach FutureID
+
+x5 = pricesAndMaturitiesAndspotprices(:, {'TimeToMaturity', 'FutureID', 'PriceDifference'});
+
+x3 = unstack(x5,'PriceDifference','FutureID');
+
+plot(x3.TimeToMaturity, x3{:, 2:end},'.')
 
 %% get number of zero prices per column
 
@@ -223,4 +230,3 @@ plot(prices.Date, prices{:, 2:end})
 datetick 'x'
 grid on
 grid minor
-
