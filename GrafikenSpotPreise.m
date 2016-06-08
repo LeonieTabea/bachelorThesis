@@ -95,6 +95,8 @@ a = histfit(Renditen.Oil,100);
 xlim([-0.13,0.13]);
 a(1).FaceColor = [.8 .8 1];
 a(2).Color = [.2 .2 .2];
+grid on
+grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
 ylabel('Dichte');
@@ -104,6 +106,8 @@ b = histfit(Renditen.Gold,100);
 xlim([-0.04,0.04]);
 b(1).FaceColor = [.8 .8 1];
 b(2).Color = [.2 .2 .2];
+grid on
+grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
 ylabel('Dichte');
@@ -112,6 +116,8 @@ c = histfit(Renditen.Corn,100);
 xlim([-0.08,0.08]);
 c(1).FaceColor = [.8 .8 1];
 c(2).Color = [.2 .2 .2];
+grid on
+grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
 ylabel('Dichte');
@@ -120,6 +126,8 @@ d = histfit(Renditen.Cocoa,100);
 xlim([-0.07,0.07]);
 d(1).FaceColor = [.8 .8 1];
 d(2).Color = [.2 .2 .2];
+grid on
+grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
 ylabel('Dichte');
@@ -128,6 +136,8 @@ e = histfit(Renditen.Cotton,100);
 xlim([-0.05,0.05]);
 e(1).FaceColor = [.8 .8 1];
 e(2).Color = [.2 .2 .2];
+grid on
+grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
 ylabel('Dichte');
@@ -135,40 +145,76 @@ ylabel('Dichte');
 %% ACF-plots der Log_Renditen
 
 autocorr(Renditen.Oil,200);
+grid on
+grid minor
+
 autocorr(Renditen.Gold,200);
+grid on
+grid minor
+
 autocorr(Renditen.Corn,200);
+grid on
+grid minor
+
 autocorr(Renditen.Cocoa,200);
+grid on
+grid minor
+
 autocorr(Renditen.Cotton,200);
+grid on
+grid minor
 
 %% ACF-plots der absoluten Log_Renditen
 
 autocorr(abs(Renditen.Oil),200);
+grid on
+grid minor
+
 autocorr(abs(Renditen.Gold),200);
+grid on
+grid minor
+
 autocorr(abs(Renditen.Corn),200);
+grid on
+grid minor
+
 autocorr(abs(Renditen.Cocoa),200);
+grid on
+grid minor
+
 autocorr(abs(Renditen.Cotton),200);
+grid on
+grid minor
 
 %% QQplots der Log_renditen
 
 qqplot(Renditen.Oil);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
+grid on
+grid minor
 
 qqplot(Renditen.Gold);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
+grid on
+grid minor
 
 qqplot(Renditen.Corn);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
+grid on
+grid minor
 
 qqplot(Renditen.Cocoa);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
-
+grid on
+grid minor
 
 qqplot(Renditen.Cotton);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
-
+grid on
+grid minor
 
