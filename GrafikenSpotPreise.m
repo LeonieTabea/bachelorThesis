@@ -55,7 +55,7 @@ datetick 'x'
 grid on
 grid minor
 xlabel('Jahr'); 
-ylabel('Log-Renditen');
+ylabel('Log-Rendite');
 
 % Grafik für Gold_Returns
 plot(Renditen.Date, Renditen.Gold)
@@ -63,7 +63,7 @@ datetick 'x'
 grid on
 grid minor
 xlabel('Jahr'); 
-ylabel('Log-Renditen');
+ylabel('Log-Rendite');
 
 % Grafik für Corn_Returns
 plot(Renditen.Date, Renditen.Corn)
@@ -71,7 +71,7 @@ datetick 'x'
 grid on
 grid minor
 xlabel('Jahr'); 
-ylabel('Log-Renditen');
+ylabel('Log-Rendite');
 
 % Grafik für Cocoa_Returns
 plot(Renditen.Date, Renditen.Cocoa)
@@ -79,7 +79,7 @@ datetick 'x'
 grid on
 grid minor
 xlabel('Jahr'); 
-ylabel('Log-Renditen');
+ylabel('Log-Rendite');
 
 % Grafik für Cotton_Returns
 plot(Renditen.Date, Renditen.Cotton)
@@ -87,15 +87,50 @@ datetick 'x'
 grid on
 grid minor
 xlabel('Jahr'); 
-ylabel('Log-Renditen');
+ylabel('Log-Rendite');
 
 %% Histogramme der Log_Renditen
 
-histfit(Renditen.Oil);
-histfit(Renditen.Gold);
-histfit(Renditen.Corn);
-histfit(Renditen.Cocoa);
-histfit(Renditen.Cotton);
+a = histfit(Renditen.Oil,100);
+xlim([-0.13,0.13]);
+a(1).FaceColor = [.8 .8 1];
+a(2).Color = [.2 .2 .2];
+legend('Log-Rendite', 'Normalverteilung')
+xlabel('Log-Rendite'); 
+ylabel('Dichte');
+
+
+b = histfit(Renditen.Gold,100);
+xlim([-0.04,0.04]);
+b(1).FaceColor = [.8 .8 1];
+b(2).Color = [.2 .2 .2];
+legend('Log-Rendite', 'Normalverteilung')
+xlabel('Log-Rendite'); 
+ylabel('Dichte');
+
+c = histfit(Renditen.Corn,100);
+xlim([-0.08,0.08]);
+c(1).FaceColor = [.8 .8 1];
+c(2).Color = [.2 .2 .2];
+legend('Log-Rendite', 'Normalverteilung')
+xlabel('Log-Rendite'); 
+ylabel('Dichte');
+
+d = histfit(Renditen.Cocoa,100);
+xlim([-0.07,0.07]);
+d(1).FaceColor = [.8 .8 1];
+d(2).Color = [.2 .2 .2];
+legend('Log-Rendite', 'Normalverteilung')
+xlabel('Log-Rendite'); 
+ylabel('Dichte');
+
+e = histfit(Renditen.Cotton,100);
+xlim([-0.05,0.05]);
+e(1).FaceColor = [.8 .8 1];
+e(2).Color = [.2 .2 .2];
+legend('Log-Rendite', 'Normalverteilung')
+xlabel('Log-Rendite'); 
+ylabel('Dichte');
 
 %% ACF-plots der Log_Renditen
 
@@ -116,9 +151,24 @@ autocorr(abs(Renditen.Cotton),200);
 %% QQplots der Log_renditen
 
 qqplot(Renditen.Oil);
+xlim([-4,4]);
+ylim([-0.4,0.4]);
+
 qqplot(Renditen.Gold);
+xlim([-4,4]);
+ylim([-0.4,0.4]);
+
 qqplot(Renditen.Corn);
+xlim([-4,4]);
+ylim([-0.4,0.4]);
+
 qqplot(Renditen.Cocoa);
+xlim([-4,4]);
+ylim([-0.4,0.4]);
+
+
 qqplot(Renditen.Cotton);
+xlim([-4,4]);
+ylim([-0.4,0.4]);
 
 
