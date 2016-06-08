@@ -214,8 +214,10 @@ grid minor
 x5 = pricesAndMaturitiesAndspotprices(:, {'TimeToMaturity', 'FutureID', 'PriceDifference'});
 
 x3 = unstack(x5,'PriceDifference','FutureID');
+x3 = sortrows(x3, 'TimeToMaturity');
 
-plot(x3.TimeToMaturity, x3{:, 2:end},'.')
+plot(x3.TimeToMaturity, x3{:, 2:end},'-')
+
 
 
 %% 
@@ -253,3 +255,15 @@ plot(prices.Date, prices{:, 2:end})
 datetick 'x'
 grid on
 grid minor
+
+%% big difference between futureprice&spotprice, <-50 (2010/11), <-30 (1995)
+
+X = pricesAndMaturitiesAndspotprices{:,6}<=-50;
+C = [pricesAndMaturitiesAndspotprices(X,1)]
+C = table2array(C);
+DatumklDiff = datestr(C)
+
+X = pricesAndMaturitiesAndspotprices{:,6}<=-30;
+C = [pricesAndMaturitiesAndspotprices(X,1)]
+C = table2array(C);
+DatumklDiff2 = datestr(C)
