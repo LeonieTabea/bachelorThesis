@@ -8,7 +8,7 @@ relDataPath = '../bachelorThesis/';
 
 %%
 % specify start and end year of investigation period
-dateBeg = 1985;
+dateBeg = 1958;
 dateEnd = 2015;
 
 %% specify encoding for maturity month
@@ -212,7 +212,9 @@ x5 = pricesAndMaturitiesAndspotprices(:, {'TimeToMaturity', 'FutureID', 'PriceDi
 
 x3 = unstack(x5,'PriceDifference','FutureID');
 
-plot(x3.TimeToMaturity, x3{:, 2:end},'.')
+x3 = sortrows(x3, 'TimeToMaturity');
+
+plot(x3.TimeToMaturity, x3{:, 2:end},'-')
 
 %% get number of zero prices per column
 
@@ -230,3 +232,21 @@ plot(prices.Date, prices{:, 2:end})
 datetick 'x'
 grid on
 grid minor
+%% Plot to show Seasonality Versuch 1
+
+SpotPricesRohstoffe.Dateeins = datestr(SpotPricesRohstoffe.Date,'dd/mm')
+SpotPricesRohstoffe.Date2 = datestr(SpotPricesRohstoffe.Date,'yyyy')
+SpotPricesRohstoffe.Date3 = datestr(SpotPricesRohstoffe.Date,'mm')
+SpotPricesRohstoffe = sortrows(SpotPricesRohstoffe, 'Date3')
+
+x7 = SpotPricesRohstoffe(:, {'Dateeins', 'Date2', 'Corn'});
+
+x6 = unstack(x7,'Corn','Date2');
+
+plot(datenum(x6.Dateeins,6) , x6{:, 2:end}, 'o')
+datetick 'x'
+grid on
+grid minor
+
+%%
+

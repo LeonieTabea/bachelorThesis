@@ -107,6 +107,8 @@ writetable(futurePrices, fname)
 settlePrices = futurePrices(:, {'Date', 'Settle', 'Ticker'});
 
 prices = unstack(settlePrices, 'Settle', 'Ticker');
+x3 = sortrows(x3, 'TimeToMaturity');
+
 
 % important: unstack does not guarantee sorting with regards to dates
 prices = sortrows(prices, 'Date'); 

@@ -211,6 +211,8 @@ plot(pricesAndMaturitiesAndspotprices.TimeToMaturity,pricesAndMaturitiesAndspotp
 x5 = pricesAndMaturitiesAndspotprices(:, {'TimeToMaturity', 'FutureID', 'PriceDifference'});
 
 x3 = unstack(x5,'PriceDifference','FutureID');
+x3 = sortrows(x3, 'TimeToMaturity');
+
 
 plot(x3.TimeToMaturity, x3{:, 2:end},'.')
 
