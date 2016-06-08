@@ -217,7 +217,8 @@ x3 = unstack(x5,'PriceDifference','FutureID');
 x3 = sortrows(x3, 'TimeToMaturity');
 
 plot(x3.TimeToMaturity, x3{:, 2:end},'-')
-
+grid on
+grid minor
 
 
 %% 
@@ -267,3 +268,34 @@ X = pricesAndMaturitiesAndspotprices{:,6}<=-30;
 C = [pricesAndMaturitiesAndspotprices(X,1)]
 C = table2array(C);
 DatumklDiff2 = datestr(C)
+
+%% difference at time t=0 & maturity
+
+maturity = pricesAndMaturitiesAndspotprices{:,4}==0;
+maturity1 = [pricesAndMaturitiesAndspotprices(maturity,1)]
+
+pricediff = pricesAndMaturitiesAndspotprices{:,4}==0;
+pricediff1 = [pricesAndMaturitiesAndspotprices(pricediff,6)]
+
+A = table2array(maturity1)
+B = table2array(pricediff1)
+newtable = table(A, B)
+
+plot(newtable{:,1}, newtable{:, 2:end},'o')
+datetick 'x'
+grid on
+grid minor
+
+%% Plot without NaNs
+
+[nRows, nCols] = size(x3);
+
+y = x3{:,1}
+hold on
+for ii=2:nCols
+    y = x3{:,1}
+    thisval =x3{:,ii}
+   plot(y(~isnan(thisval)),thisval(~isnan(thisval)));
+   grid on
+   grid minor
+end
