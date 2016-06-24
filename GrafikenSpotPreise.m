@@ -8,6 +8,62 @@ datetick 'x'
 grid on
 grid minor
 
+%% Subplot Rohstoffpreise
+figure(79)
+
+subplot(2,2,1)
+plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe.Oil)
+datetick 'x'
+xlabel('Jahr'); 
+ylabel('Preis in US Dollar'); 
+title('Rohöl');
+grid on
+grid minor
+
+subplot(2,2,2)
+plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe.Gold)
+datetick 'x'
+xlabel('Jahr'); 
+ylabel('Preis in US Dollar'); 
+title('Gold');
+grid on
+grid minor
+
+subplot(2,2,3)
+plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe.Cocoa)
+datetick 'x'
+xlabel('Jahr'); 
+ylabel('Preis in US Dollar'); 
+title('Kakao');
+grid on
+grid minor
+
+subplot(2,2,4)
+plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe.Cotton)
+datetick 'x'
+xlabel('Jahr'); 
+ylabel('Preis in US Dollar'); 
+title('Baumwolle');
+grid on
+grid minor
+
+plotCounter = '79';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/subplotspreise');
+
+figureNumber = 79;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+
+
+%%
 
 SpotPricesRohstoffe(1,2:end)
 
@@ -27,7 +83,7 @@ plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe{:, 7:end})
 datetick 'x'
 grid on
 grid minor
-legend(tabnames(SpotPricesRohstoffe(:, 7:end)),'Location','northwest')
+legend('Rohöl','Gold','Mais','Kakao','Baumwolle','Location','northwest')
 xlabel('Jahr'); 
 ylabel('Normierter Preis in US Dollar'); 
 
@@ -58,7 +114,7 @@ Renditen(:,2) = price2ret(SpotPricesRohstoffe.Gold);
 Renditen(:,3) = price2ret(SpotPricesRohstoffe.Corn);
 Renditen(:,4) = price2ret(SpotPricesRohstoffe.Cocoa);
 Renditen(:,5) = price2ret(SpotPricesRohstoffe.Cotton);
-SpotPricesRohstoffe(8088,:) = []
+SpotPricesRohstoffe(1,:) = []
 Renditen(:,6) = SpotPricesRohstoffe.Code;
 
 Renditen = array2table(Renditen)
@@ -174,7 +230,7 @@ ylabel('Log-Rendite');
 plotCounter = '3';
 
 figNumCmd = ['-f' num2str(plotCounter)];
-print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/returnsCocoa');
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/returnsCorn');
 
 figureNumber = 3;
 
@@ -335,6 +391,7 @@ set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
 %% ACF Plot Mais logrendite
 figure(7)
 autocorr(Renditen.Corn,200);
+title('');
 grid on
 grid minor
 
@@ -395,7 +452,9 @@ set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
 
 %% PLot abs renditen Mais 
 
+figure(9)
 autocorr(abs(Renditen.Corn),200);
+title('');
 grid on
 grid minor
 
@@ -473,6 +532,7 @@ figure(11)
 qqplot(Renditen.Corn);
 xlim([-4,4]);
 ylim([-0.4,0.4]);
+title('');
 grid on
 grid minor
 
@@ -492,4 +552,50 @@ set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
 
 
 
+%%
 
+figure(100)
+plot(SpotPricesRohstoffe.Code, SpotPricesRohstoffe.Corn)
+datetick 'x'
+grid on
+grid minor
+xlabel('Jahr'); 
+ylabel('Preis in US Dollar'); 
+
+plotCounter = '100';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/PreiseCorn');
+
+figureNumber = 100;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+%% Grafik für abs acf kakao ab 1995
+
+kakao2 = Renditen.Cocoa(2787:end);
+
+figure(77)
+autocorr(abs(kakao2),200);
+grid on
+grid minor
+title('Kakao');
+
+plotCounter = '77';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/acfabskakaozwei');
+
+figureNumber = 77;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
