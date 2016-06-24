@@ -8,7 +8,7 @@ relDataPath = '../bachelorThesis/';
 
 %%
 % specify start and end year of investigation period
-dateBeg = 1958;
+dateBeg = 1985;
 dateEnd = 2015;
 
 %% specify encoding for maturity month
@@ -204,7 +204,9 @@ pricesAndMaturitiesAndspotprices.FuturePrices = pricesAndMaturitiesAndspotprices
 pricesAndMaturitiesAndspotprices.PriceDifference = pricesAndMaturitiesAndspotprices.FuturePrices - pricesAndMaturitiesAndspotprices.Corn;
 
 % TestGrafik time to maturity & Price Difference
+
 plot(pricesAndMaturitiesAndspotprices.TimeToMaturity,pricesAndMaturitiesAndspotprices.PriceDifference)
+
 
 %% Testplot maturity & Price Difference getrennt nach FutureID
 
@@ -227,26 +229,95 @@ nZeros(1, xxInds)
 
 
 %%
-
+figure(12)
 plot(prices.Date, prices{:, 2:end})
 datetick 'x'
+xlabel('Jahr');
+ylabel('Preis in US Dollar');
+
 grid on
 grid minor
-%% Plot to show Seasonality Versuch 1
 
-SpotPricesRohstoffe.Dateeins = datestr(SpotPricesRohstoffe.Date,'dd/mm')
-SpotPricesRohstoffe.Date2 = datestr(SpotPricesRohstoffe.Date,'yyyy')
-SpotPricesRohstoffe.Date3 = datestr(SpotPricesRohstoffe.Date,'mm')
-SpotPricesRohstoffe = sortrows(SpotPricesRohstoffe, 'Date3')
+plotCounter = '12';
 
-x7 = SpotPricesRohstoffe(:, {'Dateeins', 'Date2', 'Corn'});
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/FuturePricesCorn');
 
-x6 = unstack(x7,'Corn','Date2');
+figureNumber = 12;
 
-plot(datenum(x6.Dateeins,6) , x6{:, 2:end}, 'o')
-datetick 'x'
-grid on
-grid minor
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
 
 %%
+
+[nRows, nCols] = size(x3);
+
+figure(13)
+y = x3{:,1}
+hold on
+for ii=2:nCols
+    y = x3{:,1}
+    thisval =x3{:,ii}
+   plot(y(~isnan(thisval)),thisval(~isnan(thisval)));
+   xlabel('Tage bis zur Maturity'); 
+   ylabel('Differenz von Future- und Spotpreis');
+   grid on
+   grid minor
+end
+
+plotCounter = '13';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/FuturespotvsMaturityCorn');
+
+figureNumber = 13;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+%% difference at time t=0 & maturity
+
+maturity = pricesAndMaturitiesAndspotprices{:,4}==0;
+maturity1 = [pricesAndMaturitiesAndspotprices(maturity,1)]
+
+pricediff = pricesAndMaturitiesAndspotprices{:,4}==0;
+pricediff1 = [pricesAndMaturitiesAndspotprices(pricediff,6)]
+
+A = table2array(maturity1)
+B = table2array(pricediff1)
+newtable = table(A, B)
+
+figure(14)
+plot(newtable{:,1}, newtable{:, 2:end},'o')
+datetick 'x'
+xlabel('Maturity-Datum'); 
+ylabel('Preisdifferenz');
+grid on
+grid minor
+
+plotCounter = '14';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/DifferenceatMaturityCorn');
+
+figureNumber = 14;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+
+
 

@@ -106,10 +106,10 @@ writetable(futurePrices, fname)
 
 settlePrices = futurePrices(:, {'Date', 'Settle', 'Ticker'});
 
-prices = unstack(settlePrices, 'Settle', 'Ticker');
+prices4 = unstack(settlePrices, 'Settle', 'Ticker');
 
 % important: unstack does not guarantee sorting with regards to dates
-prices = sortrows(prices, 'Date'); 
+prices4 = sortrows(prices4, 'Date'); 
 
 
  
@@ -117,7 +117,7 @@ prices = sortrows(prices, 'Date');
 
 
 % extract prices as matrix
-priceVals = prices{:, :};
+priceVals = prices4{:, :};
 
 % find valid observations: neither NaN nor 0
 validObs = ~isnan(priceVals) & ~ (priceVals == 0);
@@ -126,17 +126,17 @@ validObs = ~isnan(priceVals) & ~ (priceVals == 0);
 findLastValFun = @(x)find(x, 1, 'last');
 
 % apply function to each column to find last observation
-[nRows, nCols] = size(prices);
+[nRows, nCols] = size(prices4);
 lastObsInds = zeros(1, nCols);
 for ii=1:nCols
     lastObsInds(1, ii) = findLastValFun(validObs(:, ii));
 end
 
 % get respective dates to get maturities
-Maturities = prices.Date(lastObsInds(1,:));
+Maturities = prices4.Date(lastObsInds(1,:));
 
 % replicate date column
-dats = repmat(prices.Date, 1, nCols);
+dats = repmat(prices4.Date, 1, nCols);
 
 % get distance to maturity
 xxMaturs = repmat(Maturities', nRows, 1);
@@ -145,7 +145,7 @@ MaturityDates = xxMaturs - dats;
 %%
 
 % include real dates again
-MaturityDates(:, 1) = prices.Date;
+MaturityDates(:, 1) = prices4.Date;
 
 %%
 
@@ -155,7 +155,7 @@ MaturityDates(MaturityDates < 0) = NaN;
 %%
 % make table
 maturitiestable = array2table(MaturityDates);
-maturitiestable.Properties.VariableNames = tabnames(prices);
+maturitiestable.Properties.VariableNames = tabnames(prices4);
 
 %%
 
@@ -165,7 +165,7 @@ longMaturities = stack(maturitiestable, tabnames(maturitiestable(:, 2:end)),...
     'IndexVariableName','FutureID');
 
 % make prices to long format
-longPrices = stack(prices, tabnames(prices(:, 2:end)),...
+longPrices = stack(prices4, tabnames(prices4(:, 2:end)),...
     'NewDataVariableName','FuturePrices',...
     'IndexVariableName','FutureID');
 
@@ -196,42 +196,43 @@ SpotPricesRohstoffe = sortrows(SpotPricesRohstoffe, 'Date');
 %%
 %Add spot prices to long format
 
-pricesAndMaturitiesAndspotprices = outerjoin(pricesAndMaturities,SpotPricesRohstoffe, 'Keys', {'Date'},...
+pricesAndMaturitiesAndspotprices4 = outerjoin(pricesAndMaturities,SpotPricesRohstoffe, 'Keys', {'Date'},...
     'MergeKeys', true, 'Type', 'left');
 %%
 % Add new Column (Futureprice-spotprice) to pricesAndMaturitiesAndspotprices
 
-pricesAndMaturitiesAndspotprices.PriceDifference = pricesAndMaturitiesAndspotprices.FuturePrices - pricesAndMaturitiesAndspotprices.Cotton;
+pricesAndMaturitiesAndspotprices4.PriceDifference = pricesAndMaturitiesAndspotprices4.FuturePrices - pricesAndMaturitiesAndspotprices4.Cotton;
 
 % TestGrafik time to maturity & Price Difference
-plot(pricesAndMaturitiesAndspotprices.TimeToMaturity,pricesAndMaturitiesAndspotprices.PriceDifference)
+plot(pricesAndMaturitiesAndspotprices4.TimeToMaturity,pricesAndMaturitiesAndspotprices4.PriceDifference)
 datetick 'x'
 grid on
 grid minor
 
-%% Testplot maturity & Price Difference getrennt nach FutureID
+%% plot maturity & Price Difference getrennt nach FutureID
 
-x5 = pricesAndMaturitiesAndspotprices(:, {'TimeToMaturity', 'FutureID', 'PriceDifference'});
+x5 = pricesAndMaturitiesAndspotprices4(:, {'TimeToMaturity', 'FutureID', 'PriceDifference'});
 
-x3 = unstack(x5,'PriceDifference','FutureID');
-x3 = sortrows(x3, 'TimeToMaturity');
+x4 = unstack(x5,'PriceDifference','FutureID');
+x4 = sortrows(x4, 'TimeToMaturity');
 
-plot(x3.TimeToMaturity, x3{:, 2:end},'-')
+plot(x4.TimeToMaturity, x4{:, 2:end},'-')
 grid on
 grid minor
+
 
 
 %% 
 
 % get number of zero prices per column
-nZeros = varfun(@(x)sum(x == 0), prices(:, 2:end));
-nZeros.Properties.VariableNames = tabnames(prices(:, 2:end));
+nZeros = varfun(@(x)sum(x == 0), prices4(:, 2:end));
+nZeros.Properties.VariableNames = tabnames(prices4(:, 2:end));
 
 % show futures with zero prices
 xxInds = nZeros{1, :} > 0;
 nZeros(1, xxInds)
 
-plot(prices.Date, prices{:, tabnames(nZeros(:, xxInds))})
+plot(prices4.Date, prices4{:, tabnames(nZeros(:, xxInds))})
 datetick 'x'
 grid on
 grid minor
@@ -240,62 +241,75 @@ grid minor
 
 %% Zeros Location
 LocationZeros = [];
-for col = prices{:, 2:end}
+for col = prices4{:, 2:end}
     notnan = find(~isnan(col)); 
     LocationZeros(end+1) = length(notnan) - (find(col(notnan), 1, 'last') - find(col(notnan), 1, 'first') + 1) == sum(col == 0);
 end
 
 any(LocationZeros == false)
 %% convert zeros to nan
-prices{:,2:end}(prices{:,2:end} == 0) = nan;
+prices4{:,2:end}(prices4{:,2:end} == 0) = nan;
 
 
 %%
 
-plot(prices.Date, prices{:, 2:end})
+plot(prices4.Date, prices4{:, 2:end})
 datetick 'x'
 grid on
 grid minor
 
+
+
 %% big difference between futureprice&spotprice, <-50 (2010/11), <-30 (1995)
 
-X = pricesAndMaturitiesAndspotprices{:,6}<=-50;
-C = [pricesAndMaturitiesAndspotprices(X,1)]
+X = pricesAndMaturitiesAndspotprices4{:,6}<=-50;
+C = [pricesAndMaturitiesAndspotprices4(X,1)]
 C = table2array(C);
 DatumklDiff = datestr(C)
 
-X = pricesAndMaturitiesAndspotprices{:,6}<=-30;
-C = [pricesAndMaturitiesAndspotprices(X,1)]
+X = pricesAndMaturitiesAndspotprices4{:,6}<=-30;
+C = [pricesAndMaturitiesAndspotprices4(X,1)]
 C = table2array(C);
 DatumklDiff2 = datestr(C)
 
 %% difference at time t=0 & maturity
 
-maturity = pricesAndMaturitiesAndspotprices{:,4}==0;
-maturity1 = [pricesAndMaturitiesAndspotprices(maturity,1)]
+maturity = pricesAndMaturitiesAndspotprices4{:,4}==0;
+maturity1 = [pricesAndMaturitiesAndspotprices4(maturity,1)]
 
-pricediff = pricesAndMaturitiesAndspotprices{:,4}==0;
-pricediff1 = [pricesAndMaturitiesAndspotprices(pricediff,6)]
+pricediff = pricesAndMaturitiesAndspotprices4{:,4}==0;
+pricediff1 = [pricesAndMaturitiesAndspotprices4(pricediff,6)]
 
 A = table2array(maturity1)
 B = table2array(pricediff1)
-newtable = table(A, B)
+newtable4 = table(A, B)
 
-plot(newtable{:,1}, newtable{:, 2:end},'o')
+
+
+plot(newtable4{:,1}, newtable4{:, 2:end},'o')
 datetick 'x'
 grid on
 grid minor
 
+
+
 %% Plot without NaNs
 
-[nRows, nCols] = size(x3);
 
-y = x3{:,1}
+[nRows, nCols] = size(x4);
+
+y = x4{:,1}
 hold on
 for ii=2:nCols
-    y = x3{:,1}
-    thisval =x3{:,ii}
+    y = x4{:,1}
+    thisval =x4{:,ii}
    plot(y(~isnan(thisval)),thisval(~isnan(thisval)));
    grid on
    grid minor
 end
+
+
+
+
+
+
