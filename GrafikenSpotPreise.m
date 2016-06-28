@@ -256,7 +256,7 @@ grid minor
 legend('Log-Rendite', 'Normalverteilung')
 title('Rohöl');
 xlabel('Log-Rendite'); 
-ylabel('Dichte');
+ylabel('Häufigkeit');
 
 
 
@@ -271,7 +271,7 @@ grid minor
 legend('Log-Rendite', 'Normalverteilung')
 title('Gold');
 xlabel('Log-Rendite'); 
-ylabel('Dichte');
+ylabel('Häufigkeit');
 
 
 subplot(2,2,3)
@@ -284,7 +284,7 @@ grid minor
 legend('Log-Rendite', 'Normalverteilung')
 title('Kakao');
 xlabel('Log-Rendite'); 
-ylabel('Dichte');
+ylabel('Häufigkeit');
 
 subplot(2,2,4)
 e = histfit(Renditen.Cotton,100);
@@ -296,7 +296,7 @@ grid minor
 legend('Log-Rendite', 'Normalverteilung')
 title('Baumwolle');
 xlabel('Log-Rendite'); 
-ylabel('Dichte');
+ylabel('Häufigkeit');
 
 plotCounter = '4';
 
@@ -323,7 +323,7 @@ grid on
 grid minor
 legend('Log-Rendite', 'Normalverteilung')
 xlabel('Log-Rendite'); 
-ylabel('Dichte');
+ylabel('Häufigkeit');
 
 plotCounter = '5';
 
