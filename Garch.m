@@ -124,8 +124,23 @@ ylabel('Preis in US Dollar');
 grid on
 grid minor
 
+plotCounter = '123';
 
-%% Plot returns 
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/FutureCornPreise');
+
+figureNumber = 123;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+
+
+%% returns 
 
 Futurecornprices.Properties.VariableNames{'Futurecornprices1'} = 'Date';
 Futurecornprices.Properties.VariableNames{'Futurecornprices2'} = 'Price';
@@ -140,7 +155,7 @@ Futurecornrenditen(:,1) = Futurecornprices.Date;
 
 Futurecornrenditen = array2table(Futurecornrenditen);
 
-%% PLot
+%% PLot returns
 figure(1234)
 plot(Futurecornrenditen{:,1}, Futurecornrenditen{:,2})
 datetick 'x'
@@ -149,10 +164,27 @@ ylabel('Log-Rendite');
 grid on
 grid minor
 
-%% Ljung Box test lehnt Nullhypothese, dass renditen nicht autokorreliert sind ab??
+plotCounter = '1234';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/FutureCornRenditen');
+
+figureNumber = 1234;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+%% Ljung Box test lehnt Nullhypothese ab
 returns = Futurecornrenditen{:,2}; 
 
+returns2 = returns.^2;
+
 [h, pValue] = lbqtest(returns)
+[h, pValue] = lbqtest(returns2)
 
 figure
 autocorr(returns,500);
@@ -167,49 +199,50 @@ returns = Futurecornrenditen{:,2}
 
 
 %% VaR
-% With these insights in mind, we now want to estimate the 
-% value-at-risk for the German stock index. The value-at-risk 
-% associated with a given asset is nothing else than a lower 
-% quantile of the distribution of returns. Hence, a value-at-risk
-% of confidence level 95% denotes nothing else than a return 
-% level that is fallen short of at maximum 5% of the times. 
-% This value will be estimated on three different ways.
-
+%
 % init different value-at-risk confidence levels
 quants = [0.005 0.01 0.05];
-
-
-% show exceedances in red
-daxDates = Futurecornprices.Date;
-
 
 
 
 %% Fit Garch model to data and estimate V 
 
-EstMdl = garch('GARCH',NaN,'ARCH',NaN,'Distribution','t');
-n=300;
+EstMdl = garch('GARCH',NaN,'ARCH',NaN);
+n=500;
 
 for i=(n+1):length(returns)
     data=returns((i-n):(i-1));
-    EstMdl1 = estimate(EstMdl,data,'Display','off');
+    EstMdl1 = estimate(EstMdl,data);
     V(i-n)=sqrt(forecast(EstMdl1,1,'y0',data));
-    DoF(i-n)=EstMdl1.Distribution.DoF;
+    Constantt(i-n)=EstMdl1.Constant;
+    Garchhh(i-n)=EstMdl1.GARCH{1};
+    Archh(i-n)=EstMdl1.ARCH{1};
 end
+
+%% Plot for Garch and Arch Parameters
+figure
+plot(Garchhh)
+hold on
+plot(Archh)
+
 
 
 %%
 % preallocate VaR vector
+returns(1:500) = [];
 
+date = Futurecornprices.Date;
+
+date(1:500) = [];
 
 vars = zeros(numel(quants), numel(returns));
 
 for ii=1:numel(V)
     % get sigma value
     curr_sigma = V(ii);
-    curr_DoF=DoF(ii);
-    vars(:, ii) = tinv(quants', curr_DoF)*curr_sigma;
+    vars(:, ii) = norminv(quants',0, curr_sigma);
 end
+
 
 %% Plot returns with exceeds
 
@@ -219,26 +252,163 @@ for ii=1:numel(quants)
     
     % include in figure
     figure('position', [50 50 1200 600])
-    plot(Futurecornprices.Date( ~exceeds), ...
+    plot(date( ~exceeds), ...
         returns(~exceeds), '.')
     hold on;
-    plot(Futurecornprices.Date( exceeds), ...
+    plot(date( exceeds), ...
         returns(exceeds), '.r', 'MarkerSize', 12)
     datetick 'x'
-    set(gca, 'xLim', [Futurecornprices.Date(1) Futurecornprices.Date(end-1)], ...
+    set(gca, 'xLim', [date(1) date(end-1)], ...
         'yLim', [-0.15 0.1]);
 
-    % include line for VaR estimations
+    %include line for VaR estimations
     hold on;
-    plot(Futurecornprices.Date(1:end), vars(ii, :), '-k')
+    plot(date(1:end), vars(ii, :), '-k')
 
     % calculate exceedance frequency
     frequ = sum(exceeds)/numel(returns);
     
-    title(['Exceedance frequency: ' num2str(frequ, 3)...
-        ' instead of ' num2str(quants(ii), 3)])
+    title(['Verstoﬂ Frequenz: ' num2str(frequ, 3)...
+        ' anstelle von ' num2str(quants(ii), 3)])
+    xlabel('Jahr');
+    ylabel('Log-Rendite');
+    grid on;
+    grid minor;
+    
+    
 end
 
 
+%% Save Plots as pdf
+
+figure(1000)
+exceeds = (returns' <= vars(3, :));
+    
+    % include in figure
+
+    plot(date( ~exceeds), ...
+        returns(~exceeds), '.')
+    hold on;
+    plot(date( exceeds), ...
+        returns(exceeds), '.r', 'MarkerSize', 12)
+    datetick 'x'
+    set(gca, 'xLim', [date(1) date(end-1)], ...
+        'yLim', [-0.15 0.1]);
+
+    % include line for VaR estimations
+    hold on;
+    plot(date(1:end), vars(3, :), '-k')
+
+    % calculate exceedance frequency
+    frequ = sum(exceeds)/numel(returns);
+    
+    title(['Verstoﬂ Frequenz: ' num2str(frequ, 3)...
+        ' anstelle von ' num2str(quants(3), 3)])
+    xlabel('Jahr');
+    ylabel('Log-Rendite');
+    grid on;
+    grid minor;
 
 
+plotCounter = '1000';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garcheins');
+
+figureNumber = 1000;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+    
+%%    
+figure(2000)
+exceeds = (returns' <= vars(2, :));
+    
+
+    plot(date( ~exceeds), ...
+        returns(~exceeds), '.')
+    hold on;
+    plot(date( exceeds), ...
+        returns(exceeds), '.r', 'MarkerSize', 12)
+    datetick 'x'
+    set(gca, 'xLim', [date(1) date(end-1)], ...
+        'yLim', [-0.15 0.1]);
+
+    % include line for VaR estimations
+    hold on;
+    plot(date(1:end), vars(2, :), '-k')
+
+    % calculate exceedance frequency
+    frequ = sum(exceeds)/numel(returns);
+    
+    title(['Verstoﬂ Frequenz: ' num2str(frequ, 3)...
+        ' anstelle von ' num2str(quants(2), 3)])
+    xlabel('Jahr');
+    ylabel('Log-Rendite');
+    grid on;
+    grid minor;
+    
+plotCounter = '2000';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garch2');
+
+figureNumber = 2000;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+    
+ 
+%%    
+figure(3000)
+exceeds = (returns' <= vars(1, :));
+    
+
+    plot(date( ~exceeds), ...
+        returns(~exceeds), '.')
+    hold on;
+    plot(date( exceeds), ...
+        returns(exceeds), '.r', 'MarkerSize', 12)
+    datetick 'x'
+    set(gca, 'xLim', [date(1) date(end-1)], ...
+        'yLim', [-0.15 0.1]);
+
+    % include line for VaR estimations
+    hold on;
+    plot(date(1:end), vars(1, :), '-k')
+
+    % calculate exceedance frequency
+    frequ = sum(exceeds)/numel(returns);
+    
+    title(['Verstoﬂ Frequenz: ' num2str(frequ, 3)...
+        ' anstelle von ' num2str(quants(1), 3)])
+    xlabel('Jahr');
+    ylabel('Log-Rendite');
+    grid on;
+    grid minor;
+
+plotCounter = '3000';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garch3');
+
+figureNumber = 3000;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
+
+       
