@@ -225,7 +225,13 @@ plot(Garchhh)
 hold on
 plot(Archh)
 
+%% test if sum of parameters >zero 
+for i=1:length(Garchhh)
+    summe(i) = Garchhh(i)+Constantt(i)+Archh(i);
+end
 
+max(summe) 
+min(summe)
 
 %%
 % preallocate VaR vector
