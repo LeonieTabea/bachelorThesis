@@ -212,7 +212,7 @@ n=500;
 
 for i=(n+1):length(returns)
     data=returns((i-n):(i-1));
-    EstMdl1 = estimate(EstMdl,data);
+    EstMdl1 = estimate(EstMdl,data - mean(data));
     V(i-n)=sqrt(forecast(EstMdl1,1,'y0',data));
     Constantt(i-n)=EstMdl1.Constant;
     Garchhh(i-n)=EstMdl1.GARCH{1};
@@ -253,6 +253,15 @@ end
 
 max(summe) 
 min(summe)
+
+for i=1:length(Garchhh)
+    summe1(i) = Garchhh(i)+Archh(i);
+end
+
+max(summe1) 
+min(summe1)
+
+
 
 %%
 % preallocate VaR vector
