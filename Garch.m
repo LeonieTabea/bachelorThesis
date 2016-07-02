@@ -217,13 +217,34 @@ for i=(n+1):length(returns)
     Constantt(i-n)=EstMdl1.Constant;
     Garchhh(i-n)=EstMdl1.GARCH{1};
     Archh(i-n)=EstMdl1.ARCH{1};
+    M(i-n)=sum(data)/500;
 end
 
 %% Plot for Garch and Arch Parameters
-figure
-plot(Garchhh)
+figure(1212)
+plot(date,Garchhh)
 hold on
-plot(Archh)
+plot(date,Archh)
+xlabel('Jahr'); 
+ylabel('Werte der Garch und Arch Parameter'); 
+legend('Garch','Arch')
+datetick 'x'
+grid on
+grid minor
+
+plotCounter = '1212';
+
+figNumCmd = ['-f' num2str(plotCounter)];
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garchparameter');
+
+figureNumber = 1212;
+
+f = figure(figureNumber);
+orient landscape
+xx = zeros(4,1);
+xx(3:4) = get(gcf,'PaperSize');
+set(gcf,'PaperPosition',xx)
+set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
 
 %% test if sum of parameters >zero 
 for i=1:length(Garchhh)
@@ -246,7 +267,8 @@ vars = zeros(numel(quants), numel(returns));
 for ii=1:numel(V)
     % get sigma value
     curr_sigma = V(ii);
-    vars(:, ii) = norminv(quants',0, curr_sigma);
+    curr_mu=M(ii);
+    vars(:, ii) = norminv(quants',curr_mu, curr_sigma);
 end
 
 
@@ -287,7 +309,7 @@ end
 
 %% Save Plots as pdf
 
-figure(1000)
+figure(7000)
 exceeds = (returns' <= vars(3, :));
     
     % include in figure
@@ -316,12 +338,12 @@ exceeds = (returns' <= vars(3, :));
     grid minor;
 
 
-plotCounter = '1000';
+plotCounter = '7000';
 
 figNumCmd = ['-f' num2str(plotCounter)];
-print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garcheins');
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garchnormeins');
 
-figureNumber = 1000;
+figureNumber = 7000;
 
 f = figure(figureNumber);
 orient landscape
@@ -332,7 +354,7 @@ set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
 
     
 %%    
-figure(2000)
+figure(7700)
 exceeds = (returns' <= vars(2, :));
     
 
@@ -359,12 +381,12 @@ exceeds = (returns' <= vars(2, :));
     grid on;
     grid minor;
     
-plotCounter = '2000';
+plotCounter = '7700';
 
 figNumCmd = ['-f' num2str(plotCounter)];
-print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garch2');
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garchnormzwei');
 
-figureNumber = 2000;
+figureNumber = 7700;
 
 f = figure(figureNumber);
 orient landscape
@@ -376,7 +398,7 @@ set(f,'units',get(gcf,'PaperUnits'),'Position',xx,'Visible','off')
     
  
 %%    
-figure(3000)
+figure(7770)
 exceeds = (returns' <= vars(1, :));
     
 
@@ -403,12 +425,12 @@ exceeds = (returns' <= vars(1, :));
     grid on;
     grid minor;
 
-plotCounter = '3000';
+plotCounter = '7770';
 
 figNumCmd = ['-f' num2str(plotCounter)];
-print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garch3');
+print(figNumCmd, '-painters', '-dpdf','../Grafiken Final/Garchnormdrei');
 
-figureNumber = 3000;
+figureNumber = 7770;
 
 f = figure(figureNumber);
 orient landscape
